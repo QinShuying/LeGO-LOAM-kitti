@@ -1,0 +1,35 @@
+<launch>
+
+    <!--- Sim Time -->
+    <param name="/use_sim_time" value="false" />
+
+    <node pkg="tf" type="static_transform_publisher" name="suibianjiao"  args="0 0 0 0 0 0 /map /slam 10" />
+
+    <!--- Run Rviz-->
+<!--    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kitti_test)/launch/test.rviz" />-->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kitti_pkg)/launch/my.rviz" />
+
+
+    <!--- LeGO-LOAM-kitti -->
+    <node pkg="kitti_pkg" type="kitti2pcd" name="kitti2pcd"    output="screen"/>
+
+
+</launch>
+
+
+
+
+
+<!--<node name="publish_pointcloud" pkg="publish_pointcloud" type="publish_pointcloud">-->
+<!--    &lt;!&ndash;        <param name="path" value="$(find publish_pointcloud)/data/robot03_plo_slam_map.pcd" type="str"/>&ndash;&gt;-->
+<!--    <param name="path" value="$(find publish_pointcloud)/data/slam_map_final.pcd" type="str"/>-->
+<!--    <param name="frame_id" value="camera" type="str"/>-->
+<!--    <param name="topic" value="/pointcloud/output" type="str"/>-->
+<!--    <param name="hz" value="2" type="int"/>-->
+<!--</node>-->
+
+
+<!--&lt;!&ndash; RViz &ndash;&gt;-->
+<!--<node pkg="rviz" type="rviz" name="$(anon rviz)" respawn="false" output="screen"-->
+<!--      args="-d $(find publish_pointcloud)/rviz/OctomapShow.rviz"/>-->
+
