@@ -4,14 +4,10 @@ project(kitti_pkg)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
 
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
-)
-
-
+#include_directories(
+#        # include
+#        ${catkin_INCLUDE_DIRS}
+#)
 
 find_package(catkin REQUIRED COMPONENTS
     tf
@@ -29,43 +25,59 @@ find_package(catkin REQUIRED COMPONENTS
     nav_msgs
 )
 
-
-find_package(PCL REQUIRED QUIET)
-find_package(OpenCV REQUIRED QUIET)
-find_package(Boost REQUIRED COMPONENTS regex thread system filesystem)
-add_definitions(-DBOOST_NO_CXX11_SCOPED_ENUMS)
-
 catkin_package(
         INCLUDE_DIRS include
         DEPENDS PCL
 )
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/src SRC_DIR)
-add_library(${PROJECT_NAME} SHARED
-        ${SRC_DIR}
-        )
+find_package(PCL REQUIRED QUIET)
+find_package(OpenCV REQUIRED QUIET)
+find_package(Eigen3 REQUIRED)
 
-message(${Boost_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}
-        ${Boost_LIBRARIES}
-        )
-
+find_package(Boost REQUIRED COMPONENTS regex thread system filesystem)
+add_definitions(-DBOOST_NO_CXX11_SCOPED_ENUMS)
 
 include_directories(
         include
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
         ${catkin_INCLUDE_DIRS}
         ${PCL_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
+        ${EIGEN3_INCLUDE_DIR}
 )
+
+
+message(${PROJECT_SOURCE_DIR})
+aux_source_directory(${PROJECT_SOURCE_DIR}/src SRC_DIR)
+
+add_library(${PROJECT_NAME} SHARED
+        ${SRC_DIR}
+        )
+
+
+target_link_libraries(${PROJECT_NAME}
+        ${Boost_LIBRARIES}
+        ${EIGEN3_LIBS}
+        ${catkin_LIBRARIES}
+        ${PCL_LIBRARIES}
+        ${OpenCV_LIBRARIES}
+        )
+
 
 link_directories(
         include
         ${OpenCV_LIBRARY_DIRS}
         ${PCL_LIBRARY_DIRS}
 )
-#/home/qsy-5208/Documents/LeGO/LeGO-LOAM-kitti/catkin_ws/src/kitti_pkg/src
-add_executable(kitti2pcd src/kitti2pcd.cpp)
-target_link_libraries(kitti2pcd ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBRARIES}) # ${Boost_LIBRARIES}
+
+
+add_executable(kitti2pcd nodecpp/kitti2pcd.cpp)
 target_link_libraries(kitti2pcd ${PROJECT_NAME})
+
+
+add_executable(kitti_pose nodecpp/kitti_pose.cpp)
+target_link_libraries(kitti_pose ${PROJECT_NAME})
+
 
